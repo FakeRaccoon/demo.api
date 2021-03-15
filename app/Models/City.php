@@ -18,6 +18,8 @@ class City extends Model {
         'name'
     ];
 
+    protected $casts = ["province_id" => "integer"];
+
     public function province()
     {
         return $this->belongsTo('App\Models\Province');

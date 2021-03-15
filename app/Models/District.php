@@ -18,6 +18,8 @@ class District extends Model {
         'name'
     ];
 
+    protected $casts = ["city_id" => "integer"];
+
     public function city()
     {
         return $this->belongsTo('App\Models\City');

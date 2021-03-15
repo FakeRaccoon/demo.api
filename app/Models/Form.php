@@ -31,6 +31,8 @@ class Form extends Model
         'return_date',
     ];
 
+    protected $casts = ["item_id" => "integer", ];
+
     public function item()
     {
         return $this->belongsTo('App\Models\Item');

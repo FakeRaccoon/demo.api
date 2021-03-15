@@ -15,7 +15,7 @@ class Transportation extends Model
     ];
     protected $table = 'transport';
 
-    protected $casts = ['idle' => 'boolean'];
+    protected $casts = ['idle' => 'boolean', 'kilometer' => 'integer'];
 
     public function history()
     {

@@ -10,11 +10,13 @@ class Rental extends Model
 {
     use HasFactory;
 
-    protected $table      = 'rental';
+    protected $table = 'rental';
 
     protected $fillable = [
         'transport_id', 'driver_id', 'description', 'rental_date', 'return_date'
     ];
+
+    protected $casts = ['status' => 'integer'];
 
     public function driver()
     {

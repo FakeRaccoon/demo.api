@@ -54,6 +54,63 @@ class RentalController extends Controller
         return response()->json($response);
     }
 
+    public function rentalStatus(Request $request)
+    {
+        $data = Rental::where('status', $request->all())->get();
+
+        $validator = Validator::make($request->all(), [
+            'status' => 'required'
+        ]);
+
+        if ($validator->fails()) {
+            $response = [
+                'status'  => 400,
+                'message' => 'Validasi!',
+                'result'  => $validator->errors()
+            ];
+            return response()->json($response, 400);
+        } else {
+            $result = [];
+            if ($data) {
+                if ($data->count() > 0) {
+                    foreach ($data as $d) {
+                        $result[] = [
+                            'id'                => $d->id,
+                            'transport'         => $d->transport,
+                            'driver'            => $d->driver,
+                            'status'            => $d->status,
+                            'description'       => $d->description,
+                            'rental_date'       => date('Y-m-d H:i:s', strtotime($d->rental_date)),
+                            'return_date'       => date('Y-m-d H:i:s', strtotime($d->return_date)),
+                            // 'created_at'        => date('Y-m-d H:i:s', strtotime($d->created_at)),
+                            // 'updated_at'        => date('Y-m-d H:i:s', strtotime($d->updated_at))
+                        ];
+                    }
+
+                    $response = [
+                        'status'     => 200,
+                        'message'    => 'Data ditemukan!',
+                        'total_data' => count($result),
+                        'result'     => $result
+                    ];
+                } else {
+                    $response = [
+                        'status'     => 404,
+                        'message'    => 'Data tidak ditemukan!',
+                        'total_data' => count($result),
+                        'result'     => $result
+                    ];
+                }
+            } else {
+                $response = [
+                    'status'  => 500,
+                    'message' => 'Server error!'
+                ];
+            }
+        }
+        return response()->json($response);
+    }
+
     public function createData(Request $request)
     {
         $validator = Validator::make($request->all(), [

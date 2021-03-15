@@ -77,5 +77,6 @@ Route::get('/image', [GetImageController::class, 'getData']);
 Route::post('/log', [LogController::class, 'createLog']);
 
 Route::get('/rental', [RentalController::class, 'rental']);
+Route::get('/rental/status', [RentalController::class, 'rentalStatus']);
 Route::post('/rental/create', [RentalController::class, 'createData']);
 Route::post('/rental/update/status', [RentalController::class, 'updateRentalStatus']);

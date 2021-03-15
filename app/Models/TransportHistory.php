@@ -11,7 +11,7 @@ class TransportHistory extends Model
 
     protected $table = 'transport_history';
 
-    // protected $casts = ['driver_id' => 'array'];
+    protected $casts = ['transport_id' => 'integer', 'driver_id' => 'integer'];
 
     public function driver()
     {

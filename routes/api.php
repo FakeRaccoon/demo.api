@@ -16,6 +16,7 @@ use App\Http\Controllers\API\TransportationController;
 use App\Http\Controllers\API\UploadController;
 use App\Http\Controllers\API\GetImageController;
 use App\Http\Controllers\API\LogController;
+use App\Http\Controllers\API\RentalController;
 use App\Models\Notification;
 
 /*
@@ -74,3 +75,7 @@ Route::post('/image/delete', [UploadController::class, 'deleteImage']);
 Route::get('/image', [GetImageController::class, 'getData']);
 
 Route::post('/log', [LogController::class, 'createLog']);
+
+Route::get('/rental', [RentalController::class, 'rental']);
+Route::post('/rental/create', [RentalController::class, 'createData']);
+Route::post('/rental/update/status', [RentalController::class, 'updateRentalStatus']);

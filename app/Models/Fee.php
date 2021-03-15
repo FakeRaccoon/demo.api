@@ -13,5 +13,5 @@ class Fee extends Model
 
     protected $fillable = ['form_id', 'fee', 'description'];
 
-    protected $casts = ["form_id" => "integer", ];
+    protected $casts = ["form_id" => "integer", 'fee' => 'integer'];
 }

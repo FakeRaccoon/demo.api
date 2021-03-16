@@ -56,7 +56,7 @@ class RentalController extends Controller
 
     public function rentalStatus(Request $request)
     {
-        $data = Rental::where('status', $request->all())->get();
+        $data = Rental::where('status', $request->all())->orderBy('id', 'DESC')->get();
 
         $validator = Validator::make($request->all(), [
             'status' => 'required'
@@ -82,8 +82,8 @@ class RentalController extends Controller
                             'description'       => $d->description,
                             'rental_date'       => date('Y-m-d H:i:s', strtotime($d->rental_date)),
                             'return_date'       => date('Y-m-d H:i:s', strtotime($d->return_date)),
-                            // 'created_at'        => date('Y-m-d H:i:s', strtotime($d->created_at)),
-                            // 'updated_at'        => date('Y-m-d H:i:s', strtotime($d->updated_at))
+                            'created_at'        => date('Y-m-d H:i:s', strtotime($d->created_at)),
+                            'updated_at'        => date('Y-m-d H:i:s', strtotime($d->updated_at))
                         ];
                     }
 
@@ -113,7 +113,7 @@ class RentalController extends Controller
 
     public function rentalPerUser(Request $request)
     {
-        $data = Rental::where('driver_id', $request->all())->get();
+        $data = Rental::where('driver_id', $request->all())->orderBy('id', 'DESC')->get();
 
         $validator = Validator::make($request->all(), [
             'driver_id' => 'required'
@@ -139,8 +139,8 @@ class RentalController extends Controller
                             'description'       => $d->description,
                             'rental_date'       => date('Y-m-d H:i:s', strtotime($d->rental_date)),
                             'return_date'       => date('Y-m-d H:i:s', strtotime($d->return_date)),
-                            // 'created_at'        => date('Y-m-d H:i:s', strtotime($d->created_at)),
-                            // 'updated_at'        => date('Y-m-d H:i:s', strtotime($d->updated_at))
+                            'created_at'        => date('Y-m-d H:i:s', strtotime($d->created_at)),
+                            'updated_at'        => date('Y-m-d H:i:s', strtotime($d->updated_at))
                         ];
                     }
 
@@ -188,6 +188,7 @@ class RentalController extends Controller
             $query = Rental::create([
                 'transport_id'  => $request->transport_id,
                 'driver_id'  => $request->driver_id,
+                'description' =>$request->description,
                 'rental_date'  => $request->rental_date,
                 'return_date'  => $request->return_date,
             ]);

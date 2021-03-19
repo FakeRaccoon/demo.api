@@ -48,6 +48,8 @@ Route::post('/form/update/status', [FormController::class, 'statusUpdate']);
 Route::post('/form/update/status/reject', [FormController::class, 'statusAndRejecReasonUpdate']);
 Route::post('/form/update', [FormController::class, 'formUpdate']);
 Route::post('/form/update/image', [FormController::class, 'imageUpdate']);
+Route::post('/form/update/codeImage', [FormController::class, 'codeImageUpdate']);
+Route::post('/form/update/returnImage', [FormController::class, 'returnImageUpdate']);
 
 Route::get('/transport', [TransportationController::class, 'transportation']);
 Route::get('/transport/{id}', [TransportationController::class, 'transportationDetail']);
@@ -59,6 +61,7 @@ Route::get('/technician/final', [TechnicianController::class, 'techFinal']);
 Route::delete('/technician/clear/{id}', [TechnicianController::class, 'clear']);
 Route::post('/technician/create', [TechnicianController::class, 'create']);
 Route::post('/technician/update', [TechnicianController::class, 'update']);
+Route::post('/technician/update/final', [TechnicianController::class, 'updateFinal']);
 Route::delete('/technician/delete/{id}', [TechnicianController::class, 'destroy']);
 
 Route::get('/notification', [NotificationController::class, 'getData']);
@@ -74,7 +77,8 @@ Route::post('/image/upload/transport', [UploadController::class, 'uploadTranspor
 Route::post('/image/delete', [UploadController::class, 'deleteImage']);
 Route::get('/image', [GetImageController::class, 'getData']);
 
-Route::post('/log', [LogController::class, 'createLog']);
+Route::post('/log/create', [LogController::class, 'createLog']);
+Route::get('/log', [LogController::class, 'getData']);
 
 Route::get('/rental', [RentalController::class, 'rental']);
 Route::get('/rental/status', [RentalController::class, 'rentalStatus']);

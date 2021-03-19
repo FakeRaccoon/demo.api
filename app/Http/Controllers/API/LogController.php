@@ -9,6 +9,22 @@ use Illuminate\Support\Facades\Validator;
 
 class LogController extends Controller
 {
+
+    public function getData(Request $request)
+    {
+        $query = Log::all();
+
+        if ($query) {
+            $response = [
+                'status'  => 200,
+                'message' => 'Data berhasil diproses!',
+                'result'  => $query
+            ];
+        }
+
+        return response()->json($response);
+    }
+
     public function createLog(Request $request)
     {
         $validator = Validator::make($request->all(), [

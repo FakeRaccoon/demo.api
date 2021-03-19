@@ -86,7 +86,10 @@ class FormController extends Controller
                         'user'         => $d->user,
                         'item_id'      => $d->item_id,
                         'item'         => $d->item,
+                        'item_measure_id' => $d->item_measure_id,
+                        'warehouse_id'    => $d->warehouse_id,
                         'warehouse'    => $d->warehouse,
+                        'warehouse_destination' => $d->warehouse_destination,
                         'fee'          => $d->fee,
                         'transport'    => $d->transport,
                         'driver'       => $d->driver,
@@ -95,6 +98,8 @@ class FormController extends Controller
                         'type'         => $d->type(),
                         'status'       => $d->status(),
                         'image'        => $d->image,
+                        'code_image'        => $d->code_image,
+                        'return_image' => $d->return_image,
                         'departure_date' => date('Y-m-d H:i:s', strtotime($d->departure_date)),
                         'return_date' => date('Y-m-d H:i:s', strtotime($d->return_date)),
                         'created_at'   => date('Y-m-d H:i:s', strtotime($d->created_at)),
@@ -141,6 +146,7 @@ class FormController extends Controller
             'city_id'      => 'required',
             'item_id' => 'required',
             'item'      => 'required',
+            'item_measure_id' => 'required',
             'type'         => 'required',
             'user_id'      => 'required',
             'status'       => 'required',
@@ -169,6 +175,7 @@ class FormController extends Controller
                 'district_id'  => $request->district_id,
                 'user_id'      => $request->user_id,
                 'item_id' => $request->item_id,
+                'item_measure_id' => $request->item_measure_id,
                 'item'      => $request->item,
                 'estimated_date' => $request->estimated_date,
                 'type'         => $request->type,
@@ -183,10 +190,12 @@ class FormController extends Controller
                 ];
             } else {
                 $response = [
-                    'status'  => 500,
+                    'status'  => 400,
                     'message' => 'Data gagal diproses!',
                     'result'  => $request->all()
                 ];
+
+                return response()->json($response, 400);
             }
         }
 
@@ -200,7 +209,7 @@ class FormController extends Controller
             'status' => 'required'
         ]);
 
-        if($validator->fails()) {
+        if ($validator->fails()) {
             return $validator->errors();
         }
 
@@ -265,6 +274,7 @@ class FormController extends Controller
             'id' => 'required',
             'status' => 'required',
             'warehouse' => 'required',
+            'warehouse_destination' => 'required',
             'transport_id' => 'nullable',
             'driver_id' => 'nullable',
             'departure_date' => 'required',
@@ -285,10 +295,12 @@ class FormController extends Controller
             ];
         } else {
             $response = [
-                'status'  => 500,
+                'status'  => 400,
                 'message' => 'Data gagal diproses!',
                 'result'  => $request->all()
             ];
+
+            return response()->json($response, 400);
         }
 
         return response()->json($response);
@@ -301,12 +313,74 @@ class FormController extends Controller
             'image' => 'required'
         ]);
 
-        if($validator->fails()) {
+        if ($validator->fails()) {
             return $validator->errors();
         }
 
         $query = Form::where('id', $request->id)->update([
             'image' => $request->image,
+        ]);
+
+        if ($query) {
+            $response = [
+                'status'  => 200,
+                'message' => 'Data berhasil diproses!',
+                'result'  => $request->all()
+            ];
+        } else {
+            $response = [
+                'status'  => 500,
+                'message' => 'Data gagal diproses!',
+                'result'  => $request->all()
+            ];
+        }
+        return response()->json($response);
+    }
+
+    public function codeImageUpdate(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'id' => 'required',
+            'code_image' => 'required'
+        ]);
+
+        if ($validator->fails()) {
+            return $validator->errors();
+        }
+
+        $query = Form::where('id', $request->id)->update([
+            'code_image' => $request->code_image,
+        ]);
+
+        if ($query) {
+            $response = [
+                'status'  => 200,
+                'message' => 'Data berhasil diproses!',
+                'result'  => $request->all()
+            ];
+        } else {
+            $response = [
+                'status'  => 500,
+                'message' => 'Data gagal diproses!',
+                'result'  => $request->all()
+            ];
+        }
+        return response()->json($response);
+    }
+
+    public function returnImageUpdate(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'id' => 'required',
+            'return_image' => 'required'
+        ]);
+
+        if ($validator->fails()) {
+            return $validator->errors();
+        }
+
+        $query = Form::where('id', $request->id)->update([
+            'return_image' => $request->return_image,
         ]);
 
         if ($query) {

@@ -12,7 +12,7 @@ class Technician extends Model
     protected $casts = ['confirmed' => 'boolean', 'form_id' => 'integer', ];
 
     protected $fillable = [
-        'name', 'form_id', 'task', 'depart', 'return', 'confirmed', 'warehouse'
+        'name', 'form_id', 'task', 'depart', 'return', 'confirmed', 'warehouse', 'username'
     ];
     protected $table = 'technician';
 }

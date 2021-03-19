@@ -27,7 +27,16 @@ class TechnicianController extends Controller
 
     public function techFinal(Request $request)
     {
-        $result = DB::table('technician')->get();
+       
+        $validator = Validator::make($request->all(), [
+           'username' => 'required'
+        ]);
+
+        if ($validator->fails()) {
+            return $validator->errors();
+        }
+
+        $result = Technician::where('confirmed', '1')->where('username', $request->all())->get();
 
         $response = [
             'status'     => 200,
@@ -53,6 +62,7 @@ class TechnicianController extends Controller
 
         $validator = Validator::make($input, [
             'form_id' => 'required',
+            'username' => 'required',
             'name' => 'required',
             'warehouse' => 'required',
             'task' => 'required',
@@ -61,7 +71,8 @@ class TechnicianController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return $this->sendError('Validation Error.', $validator->errors());
+
+            return $validator->errors();
         }
 
         $result = Technician::create($input);
@@ -86,7 +97,7 @@ class TechnicianController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return $this->sendError('Validation Error.', $validator->errors());
+            return $validator->errors();
         }
 
         $assignment = $request->header('formId');
@@ -97,6 +108,45 @@ class TechnicianController extends Controller
             'message'    => 'Data updated!',
             'result'     => $result
         ];
+
+        return response()->json($response);
+    }
+
+    public function updateFinal(Request $request)
+    {
+        $data = $request->all();
+
+        $validator = Validator::make($data, [
+            'form_id' => 'required',
+            'confirmed' => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            return $validator->errors();
+        }
+
+        $query = Technician::where('form_id', $request->form_id)->update([
+            'confirmed' => $request->confirmed,
+        ]);
+
+        if($query){
+
+            $response = [
+                'status'     => 200,
+                'message'    => 'Data Updated!',
+                'result'     => $request->all()
+            ];
+        } else {
+
+            $response = [
+                'status'     => 400,
+                'message'    => 'Data gagal diproses!',
+                'result'     => $request->all()
+            ];
+
+            return response()->json($response, 400);
+
+        }
 
         return response()->json($response);
     }

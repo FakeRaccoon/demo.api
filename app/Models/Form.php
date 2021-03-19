@@ -17,13 +17,17 @@ class Form extends Model
         'district_id',
         'item_id',
         'item',
+        'item_measure_id',
         'user_id',
         'status',
         'type',
         'fee',
         'fee_desc',
         'warehouse',
+        'warehouse_destination',
         'image',
+        'code_image',
+        'return_image',
         'vehicle',
         'reject_reason',
         'estimated_date',
@@ -31,7 +35,7 @@ class Form extends Model
         'return_date',
     ];
 
-    protected $casts = ["item_id" => "integer", ];
+    protected $casts = ["item_id" => "integer", 'warehouse_id' => 'integer', 'item_measure_id' => 'integer'];
 
     public function item()
     {
@@ -102,22 +106,22 @@ class Form extends Model
                 $status = 'Pending';
                 break;
             case '2':
-                $status = 'Reject';
-                break;
-            case '3':
                 $status = 'Approve 1';
                 break;
+            case '3':
+                $status = 'Reject';
+                break;
             case '4':
-                $status = 'Approve Kepala Gudang';
+                $status = 'Approve Kepala Teknisi';
                 break;
             case '5':
                 $status = 'Approve 2';
                 break;
             case '6':
-                $status = 'Reject 2';
+                $status = 'Dalam Perjalanan';
                 break;
             case '7':
-                $status = 'Done';
+                $status = 'Returned';
                 break;
             default:
                 $status = 'Invalid';

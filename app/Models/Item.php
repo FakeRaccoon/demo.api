@@ -16,4 +16,9 @@ class Item extends Model
     protected $casts = [
         'form_id' => 'integer', 'item_id' => 'integer', 'item_measure_id' => 'integer', 'warehouse_id' => 'integer', 'demo_type' => 'integer'
     ];
+
+    public function images()
+    {
+        return $this->hasMany(Image::class);
+    }
 }

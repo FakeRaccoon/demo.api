@@ -15,4 +15,9 @@ class Technician extends Model
         'name', 'form_id', 'task', 'depart', 'return', 'confirmed', 'warehouse', 'username'
     ];
     protected $table = 'technician';
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }

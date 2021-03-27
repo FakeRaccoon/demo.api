@@ -27,22 +27,52 @@ class TechnicianController extends Controller
 
     public function techFinal(Request $request)
     {
-       
+
         $validator = Validator::make($request->all(), [
-           'username' => 'required'
+            'user_id' => 'required'
         ]);
 
         if ($validator->fails()) {
             return $validator->errors();
         }
 
-        $result = Technician::where('confirmed', '1')->where('username', $request->all())->get();
+        $data = Technician::where('confirmed', '1')->where('user_id', $request->user_id)->get();
 
-        $response = [
-            'status'     => 200,
-            'message'    => 'Tech found!',
-            'result'     => $result
-        ];
+        $result = [];
+        if ($data) {
+            if ($data->count() > 0) {
+                foreach ($data as $d) {
+                    $result[] = [
+                        'id'                        => $d->id,
+                        'task'                      => $d->task,
+                        'user'                      => $d->user,
+                        'warehouse'                 => $d->warehouse,
+                        'confirmed'                 => $d->confirmed,
+                        'depart'                    => date('Y-m-d H:i:s', strtotime($d->depart)),
+                        'return'                    => date('Y-m-d H:i:s', strtotime($d->return))
+                    ];
+                }
+
+                $response = [
+                    'status'     => 200,
+                    'message'    => 'Data ditemukan!',
+                    'total_data' => count($result),
+                    'result'     => $result
+                ];
+            } else {
+                $response = [
+                    'status'     => 404,
+                    'message'    => 'Data tidak ditemukan!',
+                    'total_data' => count($result),
+                    'result'     => $result
+                ];
+            }
+        } else {
+            $response = [
+                'status'  => 500,
+                'message' => 'Server error!'
+            ];
+        }
 
         return response()->json($response);
     }
@@ -129,7 +159,7 @@ class TechnicianController extends Controller
             'confirmed' => $request->confirmed,
         ]);
 
-        if($query){
+        if ($query) {
 
             $response = [
                 'status'     => 200,
@@ -145,7 +175,6 @@ class TechnicianController extends Controller
             ];
 
             return response()->json($response, 400);
-
         }
 
         return response()->json($response);

@@ -135,7 +135,7 @@ class FormController extends Controller
     {
 
         $search = $request->header('status');
-        $data = Form::where('status', $search)->get();
+        $data = Form::where('status', $search)->with('items.images')->with('technician.user')->get();
 
         $result = [];
         if ($data) {
@@ -146,9 +146,9 @@ class FormController extends Controller
                         'destination'               => $d->destination,
                         'user'                      => $d->user,
                         'items'                     => $d->items,
-                        'warehouse_id'              => $d->warehouse_id,
-                        'warehouse'                 => $d->warehouse,
-                        'warehouse_destination'     => $d->warehouse_destination,
+                        // 'warehouse_id'              => $d->warehouse_id,
+                        // 'warehouse'                 => $d->warehouse,
+                        // 'warehouse_destination'     => $d->warehouse_destination,
                         'fee'                       => $d->fee,
                         'transport'                 => $d->transport,
                         'driver'                    => $d->driver,
@@ -157,9 +157,6 @@ class FormController extends Controller
                         'type'                      => $d->type(),
                         'status'                    => $d->status(),
                         'reject_reason'             => $d->reject_reason,
-                        'image'                     => $d->image,
-                        'code_image'                => $d->code_image,
-                        'return_image'              => $d->return_image,
                         'departure_date'            => date('Y-m-d H:i:s', strtotime($d->departure_date)),
                         'return_date'               => date('Y-m-d H:i:s', strtotime($d->return_date)),
                         'created_at'                => date('Y-m-d H:i:s', strtotime($d->created_at)),

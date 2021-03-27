@@ -20,13 +20,45 @@ class ItemController extends Controller
             return $validator->errors();
         }
 
-        $query = Item::where('form_id', $request->all())->get();
+        $data = Item::where('form_id', $request->form_id)->get();
 
-        if ($query) {
+        $result = [];
+        if ($data) {
+            if ($data->count() > 0) {
+                foreach ($data as $d) {
+                    $result[] = [
+                        'id'                    => $d->id,
+                        'item_id'               => $d->item_id,
+                        'item_measure_id'       => $d->item_measure_id,
+                        'item_name'             => $d->item_name,
+                        'demo_type'             => $d->demo_type,
+                        'warehouse_id'          => $d->warehouse_id,
+                        'warehouse'             => $d->warehouse,
+                        'image'                 => $d->images,
+                        'created_at'            => date('Y-m-d H:i:s', strtotime($d->created_at)),
+                        'updated_at'            => date('Y-m-d H:i:s', strtotime($d->updated_at))
+                    ];
+                }
+                $response = [
+                    'status'     => 200,
+                    'message'    => 'Data ditemukan!',
+                    'total_data' => count($result),
+                    'result'     => $result
+                ];
+            } else {
+                $response = [
+                    'status'     => 404,
+                    'message'    => 'Data tidak ditemukan!',
+                    'total_data' => count($result),
+                    'result'     => $result
+                ];
+
+                return response()->json($response, 404);
+            }
+        } else {
             $response = [
-                'status'  => 200,
-                'message' => 'Data berhasil diproses!',
-                'result'  => $query
+                'status'  => 500,
+                'message' => 'Server error!'
             ];
         }
 
@@ -51,7 +83,6 @@ class ItemController extends Controller
             ];
 
             return response()->json($response, 400);
-
         } else {
             $query = Item::create([
                 'form_id'  => $request->form_id,
@@ -96,7 +127,6 @@ class ItemController extends Controller
             ];
 
             return response()->json($response, 400);
-
         } else {
             $query = Item::create([
                 'warehouse_id'  => $request->warehouse_id,

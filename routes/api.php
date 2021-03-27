@@ -17,6 +17,7 @@ use App\Http\Controllers\API\UploadController;
 use App\Http\Controllers\API\GetImageController;
 use App\Http\Controllers\API\LogController;
 use App\Http\Controllers\API\RentalController;
+use App\Models\Item;
 use App\Models\Notification;
 
 /*
@@ -35,13 +36,15 @@ Route::post('/register', [RegisterController::class, 'register']);
 Route::post('/login', [RegisterController::class, 'login']);
 Route::post('/user/update', [RegisterController::class, 'updateUser']);
 
-Route::middleware('auth:api')->group( function () {
-    Route::resource('/item', ItemController::class);
-});
+// Route::middleware('auth:api')->group(function () {
+//     Route::resource('/item', ItemController::class);
+// });
 // Route::get('item', [ItemController::class, 'index']);
 
 Route::post('/form/create', [FormController::class, 'createForm']);
+Route::post('/form/createv2', [FormController::class, 'createFormV2']);
 Route::get('/form', [FormController::class, 'getData'])->middleware('auth:api');
+Route::get('/formv2', [FormController::class, 'getDataV2']);
 Route::get('/form/{id}', [FormController::class, 'formId']);
 Route::get('/form/status/{status}', [FormController::class, 'form']);
 Route::post('/form/update/status', [FormController::class, 'statusUpdate']);
@@ -50,6 +53,10 @@ Route::post('/form/update', [FormController::class, 'formUpdate']);
 Route::post('/form/update/image', [FormController::class, 'imageUpdate']);
 Route::post('/form/update/codeImage', [FormController::class, 'codeImageUpdate']);
 Route::post('/form/update/returnImage', [FormController::class, 'returnImageUpdate']);
+
+Route::get('/item', [ItemController::class, 'getData']);
+Route::post('/item/create', [ItemController::class, 'createItem']);
+Route::post('/item/update', [ItemController::class, 'updateItem']);
 
 Route::get('/transport', [TransportationController::class, 'transportation']);
 Route::get('/transport/{id}', [TransportationController::class, 'transportationDetail']);
@@ -65,6 +72,7 @@ Route::post('/technician/update/final', [TechnicianController::class, 'updateFin
 Route::delete('/technician/delete/{id}', [TechnicianController::class, 'destroy']);
 
 Route::get('/notification', [NotificationController::class, 'getData']);
+Route::post('/notification/create', [NotificationController::class, 'create']);
 
 Route::post('/fee', [FeeController::class, 'createFee']);
 

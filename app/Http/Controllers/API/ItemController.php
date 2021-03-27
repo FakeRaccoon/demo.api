@@ -3,114 +3,123 @@
 namespace App\Http\Controllers\API;
 
 use Illuminate\Http\Request;
-use App\Http\Controllers\API\BaseController as BaseController;
+use App\Http\Controllers\Controller;
 use App\Models\Item;
 use Illuminate\Support\Facades\Validator;
-use App\Http\Resources\Item as ItemResource;
 
-class ItemController extends BaseController
+class ItemController extends Controller
 {
 
-    public function index(Request $request)
+    public function getData(Request $request)
     {
-        $search = $request->header('search');
-        $result = Item::where('atanaName', 'LIKE', '%' . $search . '%')
-            ->get();
-        $response = [
-            'status'     => 200,
-            'message'    => 'Data ditemukan!',
-            'total_data' => count($result),
-            'result'     => $result
-        ];
+        $validator = Validator::make($request->all(), [
+            'form_id' => 'required'
+        ]);
+
+        if ($validator->fails()) {
+            return $validator->errors();
+        }
+
+        $query = Item::where('form_id', $request->all())->get();
+
+        if ($query) {
+            $response = [
+                'status'  => 200,
+                'message' => 'Data berhasil diproses!',
+                'result'  => $query
+            ];
+        }
 
         return response()->json($response);
     }
 
-    public function store(Request $request)
+    public function createItem(Request $request)
     {
-        $input = $request->all();
-
-        $validator = Validator::make($input, [
-            'itemName' => 'required',
-            'price' => 'required',
-            'stock' => 'required'
+        $validator = Validator::make($request->all(), [
+            'form_id'  => 'required',
+            'item_id'      => 'required',
+            'item_name' => 'required',
+            'item_measure_id'      => 'required',
+            'demo_type' => 'required'
         ]);
 
         if ($validator->fails()) {
-            return $this->sendError('Validation Error.', $validator->errors());
+            $response = [
+                'status'  => 400,
+                'message' => 'Validasi!',
+                'result'  => $validator->errors()
+            ];
+
+            return response()->json($response, 400);
+
+        } else {
+            $query = Item::create([
+                'form_id'  => $request->form_id,
+                'item_id'      => $request->item_id,
+                'item_name'  => $request->item_name,
+                'item_measure_id'      => $request->item_measure_id,
+                'demo_type'      => $request->demo_type,
+            ]);
+
+            if ($query) {
+                $response = [
+                    'status'  => 200,
+                    'message' => 'Data berhasil diproses!',
+                    'result'  => $request->all()
+                ];
+            } else {
+                $response = [
+                    'status'  => 400,
+                    'message' => 'Data gagal diproses!',
+                    'result'  => $request->all()
+                ];
+
+                return response()->json($response, 400);
+            }
         }
 
-        $Item = Item::create($input);
-
-        return $this->sendResponse(new ItemResource($Item), 'Item created successfully.');
+        return response()->json($response);
     }
 
-    // /**
-    //  * Display the specified resource.
-    //  *
-    //  * @param  int  $id
-    //  * @return \Illuminate\Http\Response
-    //  */
-    // // public function show($id)
-    // // {
-    // //     $Item = Item::find($id);
-
-    // //     if (is_null($Item)) {
-    // //         return $this->sendError('Item not found.');
-    // //     }
-
-    // //     return $this->sendResponse(new ItemResource($Item), 'Item retrieved successfully.');
-    // // }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Item  $item
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Item $item)
+    public function updateItem(Request $request)
     {
-        // return $this->sendResponse(new ItemResource($item), 'Item retrieved successfully.');
-        return new ItemResource($item);
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, Item $Item)
-    {
-        $input = $request->all();
-
-        $validator = Validator::make($input, [
-            'itemName' => 'required',
-            'price' => 'required'
+        $validator = Validator::make($request->all(), [
+            'warehouse_id'  => 'required',
+            'warehouse'      => 'required',
         ]);
 
         if ($validator->fails()) {
-            return $this->sendError('Validation Error.', $validator->errors());
+            $response = [
+                'status'  => 400,
+                'message' => 'Validasi!',
+                'result'  => $validator->errors()
+            ];
+
+            return response()->json($response, 400);
+
+        } else {
+            $query = Item::create([
+                'warehouse_id'  => $request->warehouse_id,
+                'warehouse'      => $request->warehouse,
+            ]);
+
+            if ($query) {
+                $response = [
+                    'status'  => 200,
+                    'message' => 'Data berhasil diproses!',
+                    'result'  => $request->all()
+                ];
+            } else {
+                $response = [
+                    'status'  => 400,
+                    'message' => 'Data gagal diproses!',
+                    'result'  => $request->all()
+                ];
+
+                return response()->json($response, 400);
+            }
         }
 
-        $Item->itemName = $input['itemName'];
-        $Item->price = $input['price'];
-        $Item->save();
-
-        return $this->sendResponse(new ItemResource($Item), 'Item updated successfully.');
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(Item $Item)
-    {
-        $Item->delete();
-
-        return $this->sendResponse([], 'Item deleted successfully.');
+        return response()->json($response);
     }
 }

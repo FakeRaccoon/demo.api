@@ -37,9 +37,9 @@ class Form extends Model
 
     protected $casts = ["item_id" => "integer", 'warehouse_id' => 'integer', 'item_measure_id' => 'integer'];
 
-    public function item()
+    public function items()
     {
-        return $this->belongsTo('App\Models\Item');
+        return $this->hasMany('App\Models\Item', 'form_id');
     }
 
     public function province()
@@ -64,7 +64,7 @@ class Form extends Model
 
     public function driver()
     {
-        return $this->belongsTo('App\Models\Driver');
+        return $this->belongsTo('App\Models\User');
     }
 
     public function fee()

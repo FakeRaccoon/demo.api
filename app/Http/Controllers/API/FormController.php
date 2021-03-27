@@ -131,6 +131,66 @@ class FormController extends Controller
         return response()->json($response);
     }
 
+    public function getDataV2(Request $request)
+    {
+
+        $search = $request->header('status');
+        $data = Form::where('status', $search)->get();
+
+        $result = [];
+        if ($data) {
+            if ($data->count() > 0) {
+                foreach ($data as $d) {
+                    $result[] = [
+                        'id'                        => $d->id,
+                        'destination'               => $d->destination,
+                        'user'                      => $d->user,
+                        'items'                     => $d->items,
+                        'warehouse_id'              => $d->warehouse_id,
+                        'warehouse'                 => $d->warehouse,
+                        'warehouse_destination'     => $d->warehouse_destination,
+                        'fee'                       => $d->fee,
+                        'transport'                 => $d->transport,
+                        'driver'                    => $d->driver,
+                        'technician'                => $d->technician,
+                        'estimated_date'            => date('Y-m-d H:i:s', strtotime($d->estimated_date)),
+                        'type'                      => $d->type(),
+                        'status'                    => $d->status(),
+                        'reject_reason'             => $d->reject_reason,
+                        'image'                     => $d->image,
+                        'code_image'                => $d->code_image,
+                        'return_image'              => $d->return_image,
+                        'departure_date'            => date('Y-m-d H:i:s', strtotime($d->departure_date)),
+                        'return_date'               => date('Y-m-d H:i:s', strtotime($d->return_date)),
+                        'created_at'                => date('Y-m-d H:i:s', strtotime($d->created_at)),
+                        'updated_at'                => date('Y-m-d H:i:s', strtotime($d->updated_at))
+                    ];
+                }
+
+                $response = [
+                    'status'     => 200,
+                    'message'    => 'Data ditemukan!',
+                    'total_data' => count($result),
+                    'result'     => $result
+                ];
+            } else {
+                $response = [
+                    'status'     => 404,
+                    'message'    => 'Data tidak ditemukan!',
+                    'total_data' => count($result),
+                    'result'     => $result
+                ];
+            }
+        } else {
+            $response = [
+                'status'  => 500,
+                'message' => 'Server error!'
+            ];
+        }
+
+        return response()->json($response);
+    }
+
     public function formStatusUpdate($status, $id)
     {
         $form = Form::where('id', '=', $id)
@@ -177,6 +237,51 @@ class FormController extends Controller
                 'item_id' => $request->item_id,
                 'item_measure_id' => $request->item_measure_id,
                 'item'      => $request->item,
+                'estimated_date' => $request->estimated_date,
+                'type'         => $request->type,
+                'status'       => $request->status
+            ]);
+
+            if ($query) {
+                $response = [
+                    'status'  => 200,
+                    'message' => 'Data berhasil diproses!',
+                    'result'  => $query
+                ];
+            } else {
+                $response = [
+                    'status'  => 400,
+                    'message' => 'Data gagal diproses!',
+                    'result'  => $request->all()
+                ];
+
+                return response()->json($response, 400);
+            }
+        }
+
+        return response()->json($response);
+    }
+
+    public function createFormV2(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'type'         => 'required',
+            'user_id'      => 'required',
+            'status'       => 'required',
+            'estimated_date' => 'required'
+        ]);
+
+        if ($validator->fails()) {
+            $response = [
+                'status'  => 400,
+                'message' => 'Validasi!',
+                'result'  => $validator->errors()
+            ];
+
+            return response()->json($response, 400);
+        } else {
+            $query = Form::create([
+                'user_id'      => $request->user_id,
                 'estimated_date' => $request->estimated_date,
                 'type'         => $request->type,
                 'status'       => $request->status

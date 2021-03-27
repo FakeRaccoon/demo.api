@@ -13,6 +13,8 @@ class Notification extends Model
 
     protected $casts = ['read' => 'boolean'];
 
+    protected $fillable = ["user_id", "title", "content", "read"];
+
     public function user()
     {
         return $this->belongsTo('App\Models\User');

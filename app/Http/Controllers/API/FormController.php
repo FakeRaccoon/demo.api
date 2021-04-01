@@ -262,6 +262,7 @@ class FormController extends Controller
     public function createFormV2(Request $request)
     {
         $validator = Validator::make($request->all(), [
+            'destination' => 'required',
             'type'         => 'required',
             'user_id'      => 'required',
             'status'       => 'required',
@@ -278,6 +279,7 @@ class FormController extends Controller
             return response()->json($response, 400);
         } else {
             $query = Form::create([
+                'destination' => $request->destination,
                 'user_id'      => $request->user_id,
                 'estimated_date' => $request->estimated_date,
                 'type'         => $request->type,
@@ -394,6 +396,50 @@ class FormController extends Controller
                 'status'  => 200,
                 'message' => 'Data berhasil diproses!',
                 'result'  => $form
+            ];
+        } else {
+            $response = [
+                'status'  => 400,
+                'message' => 'Data gagal diproses!',
+                'result'  => $request->all()
+            ];
+
+            return response()->json($response, 400);
+        }
+
+        return response()->json($response);
+    }
+
+    public function formUpdatev2(Request $request)
+    {
+
+        $validator = Validator::make($request->all(), [
+            'id' => 'required',
+            'status' => 'required',
+            'transport_id' => 'nullable',
+            'driver_id' => 'nullable',
+            'departure_date' => 'required',
+            'return_date' => 'required',
+        ]);
+
+        if ($validator->fails()) {
+
+            $response = [
+                'status'  => 400,
+                'message' => 'Validasi!',
+                'result'  => $validator->errors()
+            ];
+
+            return response()->json($response, 400);
+        }
+
+        $form = Form::where('id', $request->id)->update($request->all());
+
+        if ($form) {
+            $response = [
+                'status'  => 200,
+                'message' => 'Data berhasil diproses!',
+                'result'  => $request->all()
             ];
         } else {
             $response = [

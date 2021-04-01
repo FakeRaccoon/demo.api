@@ -72,6 +72,8 @@ class ItemController extends Controller
             'item_id'      => 'required',
             'item_name' => 'required',
             'item_measure_id'      => 'required',
+            'warehouse_id' => 'nullable',
+            'warehouse' => 'nullable',
             'demo_type' => 'required'
         ]);
 
@@ -89,6 +91,8 @@ class ItemController extends Controller
                 'item_id'      => $request->item_id,
                 'item_name'  => $request->item_name,
                 'item_measure_id'      => $request->item_measure_id,
+                'warehouse_id' => $request->warehouse_id,
+                'warehouse' => $request->warehouse,
                 'demo_type'      => $request->demo_type,
             ]);
 
@@ -115,6 +119,7 @@ class ItemController extends Controller
     public function updateItem(Request $request)
     {
         $validator = Validator::make($request->all(), [
+            'id' => 'required',
             'warehouse_id'  => 'required',
             'warehouse'      => 'required',
         ]);
@@ -128,7 +133,7 @@ class ItemController extends Controller
 
             return response()->json($response, 400);
         } else {
-            $query = Item::create([
+            $query = Item::where('id', $request->id)->update([
                 'warehouse_id'  => $request->warehouse_id,
                 'warehouse'      => $request->warehouse,
             ]);

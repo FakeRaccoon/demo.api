@@ -11,16 +11,54 @@ use Illuminate\Support\Facades\Validator;
 class TechnicianController extends Controller
 {
 
-    public function techname(Request $request)
+    public function getData(Request $request)
     {
-        $search = $request->header('name');
-        $result = Technician::where('name', 'Ale')->get();
+        $validator = Validator::make($request->all(), [
+            'user_id' => 'required'
+        ]);
 
-        $response = [
-            'status'     => 200,
-            'message'    => 'Tech found!',
-            'result'     => $result
-        ];
+        if ($validator->fails()) {
+            return $validator->errors();
+        }
+
+        $data = Technician::where('user_id', $request->user_id)->get();
+
+        $result = [];
+        if ($data) {
+            if ($data->count() > 0) {
+                foreach ($data as $d) {
+                    $result[] = [
+                        'id'                        => $d->id,
+                        'items'                     => $d->item,
+                        'task'                     => $d->task,
+                        'user'                      => $d->user,
+                        'departure_date'            => date('Y-m-d H:i:s', strtotime($d->departure_date)),
+                        'return_date'               => date('Y-m-d H:i:s', strtotime($d->return_date)),
+                        'created_at'                => date('Y-m-d H:i:s', strtotime($d->created_at)),
+                        'updated_at'                => date('Y-m-d H:i:s', strtotime($d->updated_at))
+                    ];
+                }
+
+                $response = [
+                    'status'     => 200,
+                    'message'    => 'Data ditemukan!',
+                    'total_data' => count($result),
+                    'result'     => $result
+                ];
+            } else {
+                $response = [
+                    'status'     => 404,
+                    'message'    => 'Data tidak ditemukan!',
+                    'total_data' => count($result),
+                    'result'     => $result
+                ];
+            }
+        } else {
+            $response = [
+                'status'  => 500,
+                'message' => 'Server error!'
+            ];
+        }
 
         return response()->json($response);
     }
@@ -86,26 +124,30 @@ class TechnicianController extends Controller
         return response()->json($deleteDups, 200);
     }
 
-    public function create(Request $request)
+    public function createData(Request $request)
     {
-        $input = $request->all();
 
-        $validator = Validator::make($input, [
+        $validator = Validator::make($request->all(), [
             'form_id' => 'required',
-            'username' => 'required',
-            'name' => 'required',
-            'warehouse' => 'required',
+            'user_id' => 'required',
             'task' => 'required',
+            'confirmed' => 'required',
             'depart' => 'required',
             'return' => 'required'
         ]);
 
         if ($validator->fails()) {
 
-            return $validator->errors();
+            $response = [
+                'status'     => 400,
+                'message'    => 'Validasi',
+                'result'     => $validator->errors()
+            ];
+
+            return response()->json($response, 400);
         }
 
-        $result = Technician::create($input);
+        $result = Technician::create($request->all());
 
         $response = [
             'status'     => 200,

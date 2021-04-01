@@ -23,10 +23,13 @@ class FeeController extends Controller
 
         if ($validator->fails()) {
             $response = [
-                'status'  => 402,
+                'status'  => 400,
                 'message' => 'Validasi!',
                 'result'  => $validator->errors()
             ];
+
+            return response()->json($response, 400);
+
         } else {
             $query = Fee::create([
                 'form_id'         => $request->form_id,
@@ -38,11 +41,11 @@ class FeeController extends Controller
                 $response = [
                     'status'  => 200,
                     'message' => 'Data berhasil diproses!',
-                    'result'  => $query
+                    'result'  => $request->all()
                 ];
             } else {
                 $response = [
-                    'status'  => 500,
+                    'status'  => 400,
                     'message' => 'Data gagal diproses!',
                     'result'  => $request->all()
                 ];
